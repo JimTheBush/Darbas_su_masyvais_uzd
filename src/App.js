@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import { ScatterChart } from 'react-chartkick';
 
-
-
-
-
 export default class App extends Component {
     constructor(props) {
         super(props);
@@ -20,26 +16,24 @@ export default class App extends Component {
             //
             enum: [],
             arrayvar: [],
-            gArr: [
-                {
-                    gInd: [],
-                    gnum: []
-                }
-            ]
+            data: []
 
         };
         this.generate = this.generate.bind(this);
-        this.copyToFinal = this.copyToFinal.bind(this);
         this.onGenerate= this.onGenerate.bind(this);
         this.renderTable= this.renderTable.bind(this);
     }
     generate (){
         let array = [];
         let enumer = [];
+        this.setState({data: []});
         for (let i=0; i<this.state.num; i++)
         {
             enumer[i] = i;
             let randnumb = Math.floor((Math.random() * (this.state.maxRand) + 1));
+            this.setState(previousState => ({
+                data: [...previousState.data, [i, randnumb]]
+            }));
             array[i] = randnumb;
         }
         this.setState({arrayvar: []});
@@ -48,16 +42,9 @@ export default class App extends Component {
         this.setState({ enum: enumer });
     }
 
-    copyToFinal() {
-            const newgArr = {...this.state.gArr};
-            newgArr.gInd = this.state.enum;
-            newgArr.gnum = this.state.arrayvar;
-            this.setState({gArr: newgArr});
-    }
-
     onGenerate(){
         this.generate();
-        this.copyToFinal();
+
     }
 
     handleChange(name, event) {
@@ -84,8 +71,6 @@ export default class App extends Component {
         );
     }
 
-
-
     render() {
         return (
             <div>
@@ -103,10 +88,10 @@ export default class App extends Component {
                 <h2>{ this.state.maxRand }</h2>
                 <br />*/}
                 <button onClick={this.onGenerate}>Generate</button>
-                <table>
+                <table className={'table'}>
                     { this.renderTable() }
                 </table>
-                <ScatterChart min={null} max={null} data={[this.state.arrayvar, this.state.enum]} xtitle="Index" ytitle="Random Numbers" />
+                <ScatterChart min={null} max={null} data={this.state.data} xtitle="Index" ytitle="Random Numbers" />
 
             </div>
         );
